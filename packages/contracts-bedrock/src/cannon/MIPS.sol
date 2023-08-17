@@ -806,7 +806,7 @@ contract MIPS {
                 }
                 // sra
                 else if (func == 0x03) {
-			        uint32 shamt = (insn >> 6) & 0x1F;
+                    uint32 shamt = (insn >> 6) & 0x1F;
                     return SE(rt >> shamt, 32 - shamt);
                 }
                 // sllv
@@ -919,9 +919,8 @@ contract MIPS {
                 }
                 // sltiu
                 else if (func == 0x2b) {
-                    return rs < rt ? 1: 0;
-                }
-                else {
+                    return rs < rt ? 1 : 0;
+                } else {
                     revert("invalid instruction");
                 }
             } else {
@@ -955,7 +954,7 @@ contract MIPS {
                 }
                 // lh
                 else if (opcode == 0x21) {
-			        return SE((mem >> (16 - (rs & 2) * 8)) & 0xFFFF, 16);
+                    return SE((mem >> (16 - (rs & 2) * 8)) & 0xFFFF, 16);
                 }
                 // lwl
                 else if (opcode == 0x22) {
@@ -983,14 +982,14 @@ contract MIPS {
                 }
                 //  sb
                 else if (opcode == 0x28) {
-                    uint32 val = (rt & 0xFF) << (24 - (rs&3)*8);
-                    uint32 mask = 0xFFFFFFFF ^ uint32(0xFF<<(24-(rs&3)*8));
+                    uint32 val = (rt & 0xFF) << (24 - (rs & 3) * 8);
+                    uint32 mask = 0xFFFFFFFF ^ uint32(0xFF << (24 - (rs & 3) * 8));
                     return (mem & mask) | val;
                 }
                 //  sh
                 else if (opcode == 0x29) {
-                    uint32 val = (rt & 0xFFFF) << (16 - (rs&2)*8);
-                    uint32 mask = 0xFFFFFFFF ^ uint32(0xFFFF<<(16-(rs&2)*8));
+                    uint32 val = (rt & 0xFFFF) << (16 - (rs & 2) * 8);
+                    uint32 mask = 0xFFFFFFFF ^ uint32(0xFFFF << (16 - (rs & 2) * 8));
                     return (mem & mask) | val;
                 }
                 //  swl
@@ -1005,8 +1004,8 @@ contract MIPS {
                 }
                 //  swr
                 else if (opcode == 0x2e) {
-                    uint32 val = rt << (24 - (rs&3)*8);
-                    uint32 mask = uint32(0xFFFFFFFF) << (24 - (rs&3)*8);
+                    uint32 val = rt << (24 - (rs & 3) * 8);
+                    uint32 mask = uint32(0xFFFFFFFF) << (24 - (rs & 3) * 8);
                     return (mem & ~mask) | val;
                 }
                 // ll
