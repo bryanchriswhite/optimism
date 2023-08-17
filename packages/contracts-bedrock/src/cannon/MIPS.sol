@@ -802,7 +802,10 @@ contract MIPS {
                     // srl
                     case 0x02 { out := shr(and(shr(6, insn), 0x1F), rt) }
                     // sra
-                    case 0x03 { out := sar(signextend(3, and(shr(6, insn), 0x1F)), signextend(3, rt)) }
+                    case 0x03 {
+                        let shamt := and(shr(6, insn), 0x1F)
+                        out := sar(signextend(3, shamt), signextend(3, rt))
+                    }
                     // sllv
                     case 0x04 { out := shl(and(rs, 0x1F), rt) }
                     // srlv
