@@ -491,8 +491,8 @@ func execute(insn uint32, rs uint32, rt uint32, mem uint32) uint32 {
 			panic("invalid instruction")
 		}
 	} else {
-		// special2 is not in op table to avoid pessimization
 		switch opcode {
+		// SPECIAL2
 		case 0x1C:
 			fun := insn & 0x3f // 6-bits
 			switch fun {
