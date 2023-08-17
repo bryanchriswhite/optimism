@@ -781,108 +781,164 @@ contract MIPS {
                 assembly {
                     // transform ArithLogI to SPECIAL
                     switch opcode
+                    // addi
                     case 0x8 { func := 0x20 }
+                    // addiu
                     case 0x9 { func := 0x21 }
+                    // stli
                     case 0xA { func := 0x2A }
+                    // sltiu
                     case 0xB { func := 0x2B }
+                    // andi
                     case 0xC { func := 0x24 }
+                    // ori
                     case 0xD { func := 0x25 }
+                    // xori
                     case 0xE { func := 0x26 }
 
                     switch func
-                    case 0x00 { out := shl(and(shr(6, insn), 0x1F), rt) } // sll
-                    case 0x02 { out := shr(and(shr(6, insn), 0x1F), rt) } // srl
-                    case 0x03 { out := sar(signextend(3, and(shr(6, insn), 0x1F)), signextend(3, rt)) } // sra
-                    case 0x04 { out := shl(and(rs, 0x1F), rt) } // sllv
-                    case 0x06 { out := shr(and(rs, 0x1F), rt) } // srlv
-                    case 0x07 { out := sar(signextend(3, rs), signextend(3, rt)) } // srav
-                    case 0x08 { out := rs } // jr
-                    case 0x09 { out := rs } // jalr
-                    case 0x0a { out := rs } // movz
-                    case 0x0b { out := rs } // movn
-                    case 0x0c { out := rs } // syscall
+                    // sll
+                    case 0x00 { out := shl(and(shr(6, insn), 0x1F), rt) }
+                    // srl
+                    case 0x02 { out := shr(and(shr(6, insn), 0x1F), rt) }
+                    // sra
+                    case 0x03 { out := sar(signextend(3, and(shr(6, insn), 0x1F)), signextend(3, rt)) }
+                    // sllv
+                    case 0x04 { out := shl(and(rs, 0x1F), rt) }
+                    // srlv
+                    case 0x06 { out := shr(and(rs, 0x1F), rt) }
+                    // srav
+                    case 0x07 { out := sar(signextend(3, rs), signextend(3, rt)) }
+                    // jr
+                    case 0x08 { out := rs }
+                    // jalr
+                    case 0x09 { out := rs }
+                    // movz
+                    case 0x0a { out := rs }
+                    // movn
+                    case 0x0b { out := rs }
+                    // syscall
+                    case 0x0c { out := rs }
                     // 0x0d - break not supported
-                    case 0x0f { out := rs } // sync
-                    case 0x10 { out := rs } // mfhi
-                    case 0x11 { out := rs } // mthi
-                    case 0x12 { out := rs } // mflo
-                    case 0x13 { out := rs } // mtlo
-                    case 0x18 { out := rs } // mult
-                    case 0x19 { out := rs } // multu
-                    case 0x1a { out := rs } // div
-                    case 0x1b { out := rs } // divu
+                    // sync
+                    case 0x0f { out := rs }
+                    // mfhi
+                    case 0x10 { out := rs }
+                    // mthi
+                    case 0x11 { out := rs }
+                    // mflo
+                    case 0x12 { out := rs }
+                    // mtlo
+                    case 0x13 { out := rs }
+                    // mult
+                    case 0x18 { out := rs }
+                    // multu
+                    case 0x19 { out := rs }
+                    // div
+                    case 0x1a { out := rs }
+                    case 0x1b { out := rs }
+                    // divu
                     // The rest includes transformed R-type arith imm instructions
-                    case 0x20 { out := add(rs, rt) } // add
-                    case 0x21 { out := add(rs, rt) } // addu
-                    case 0x22 { out := sub(rs, rt) } // sub
-                    case 0x23 { out := sub(rs, rt) } // subu
-                    case 0x24 { out := and(rs, rt) } // and
-                    case 0x25 { out := or(rs, rt) } // or
-                    case 0x26 { out := xor(rs, rt) } // xor
-                    case 0x27 { out := not(or(rs, rt)) } // nor
-                    case 0x2a { out := slt(signextend(3, rs), signextend(3, rt)) } // slt/slti
-                    case 0x2b { out := lt(rs, rt) } // sltu, sltiu
+                    // add
+                    case 0x20 { out := add(rs, rt) }
+                    // addu
+                    case 0x21 { out := add(rs, rt) }
+                    // sub
+                    case 0x22 { out := sub(rs, rt) }
+                    // subu
+                    case 0x23 { out := sub(rs, rt) }
+                    // and
+                    case 0x24 { out := and(rs, rt) }
+                    // or
+                    case 0x25 { out := or(rs, rt) }
+                    // xor
+                    case 0x26 { out := xor(rs, rt) }
+                    // nor
+                    case 0x27 { out := not(or(rs, rt)) }
+                    // slt/slti
+                    case 0x2a { out := slt(signextend(3, rs), signextend(3, rt)) }
+                    // sltu, sltiu
+                    case 0x2b { out := lt(rs, rt) }
                     default { badInsn := true }
                 }
             } else {
                 assembly {
                     switch opcode
-                    case 0x1C { // SPECIAL2
+                    // SPECIAL2
+                    case 0x1C {
                         let fun := and(insn, 0x3F)
                         switch fun
-                        case 0x02 { out := mul(rs, rt) } // mul - sign doesn't matter
-                        case 0x20 { // clz
+                        // mul - note: sign doesn't matter
+                        case 0x02 { out := mul(rs, rt) }
+                        // clz
+                        case 0x20 {
                             rs := not(rs)
                             let i := 0
                             for { } and(rs, 0x80000000) { i := add(i, 1) } { rs := and(0xFFFFFFFF, shl(1, rs)) }
                             out := i
                         }
-                        case 0x21 { // clo
+                        // clo
+                        case 0x21 {
                             let i := 0
                             for { } and(rs, 0x80000000) { i := add(i, 1) } { rs := and(0xFFFFFFFF, shl(1, rs)) }
                             out := i
                         }
                         default { badInsn := true }
                     }
-                    case 0x0F { out := shl(16, rt) } // lui
-                    case 0x20 { out := signextend(0, and(shr(sub(24, mul(and(rs, 3), 8)), mem), 0xFF)) } // lb
-                    case 0x21 { out := signextend(1, and(shr(sub(16, mul(and(rs, 2), 8)), mem), 0xFFFF)) } // lh
-                    case 0x22 {  // lwl
+                    // lui
+                    case 0x0F { out := shl(16, rt) }
+                    // lb
+                    case 0x20 { out := signextend(0, and(shr(sub(24, mul(and(rs, 3), 8)), mem), 0xFF)) }
+                    // lh
+                    case 0x21 { out := signextend(1, and(shr(sub(16, mul(and(rs, 2), 8)), mem), 0xFFFF)) }
+                    // lwl
+                    case 0x22 {
                         let val := shl(mul(and(rs, 3), 8), mem)
                         let mask := shl(mul(and(rs, 3), 8), 0xFFFFFFFF)
                         out := or(and(rt, not(mask)), val)
                     }
-                    case 0x23 { out := mem } // lw
-                    case 0x24 { out := and(shr(sub(24, mul(and(rs, 3), 8)), mem), 0xFF) } // lbu
-                    case 0x25 { out := and(shr(sub(16, mul(and(rs, 2), 8)), mem), 0xFFFF) } // lhu
-                    case 0x26 { // lwr
+                    // lw
+                    case 0x23 { out := mem }
+                    // lbu
+                    case 0x24 { out := and(shr(sub(24, mul(and(rs, 3), 8)), mem), 0xFF) }
+                    // lhu
+                    case 0x25 { out := and(shr(sub(16, mul(and(rs, 2), 8)), mem), 0xFFFF) }
+                    // lwr
+                    case 0x26 {
                         let val := shr(sub(24, mul(and(rs, 3), 8)), mem)
                         let mask := shr(sub(24, mul(and(rs, 3), 8)), 0xFFFFFFFF)
                         out := or(and(rt, not(mask)), val)
                     }
-                    case 0x28 { // sb
+                    // sb
+                    case 0x28 {
                         let val := shl(sub(24, mul(and(rs, 3), 8)), and(rt, 0xFF))
                         let mask := xor(0xFFFFFFFF, shl(sub(24, mul(and(rs, 3), 8)), 0xFF))
                         out := or(and(mem, mask), val)
                     }
-                    case 0x29 { // sh
+                    // sh
+                    case 0x29 {
                         let val := shl(sub(16, mul(and(rs, 2), 8)), and(rt, 0xFFFF))
                         let mask := xor(0xFFFFFFFF, shl(sub(16, mul(and(rs, 2), 8)), 0xFFFF))
                         out := or(and(mem, mask), val)
                     }
-                    case 0x2a { // swl
+                    // swl
+                    case 0x2a {
                         let val := shr(mul(and(rs, 3), 8), rt)
                         let mask := shr(mul(and(rs, 3), 8), 0xFFFFFFFF)
                         out := or(and(mem, not(mask)), val)
                     }
-                    case 0x2b { out := rt } // sw
-                    case 0x2e { // swr
+                    // sw
+                    case 0x2b { out := rt }
+                    // swr
+                    case 0x2e {
                         let val := shl(sub(24, mul(and(rs, 3), 8)), rt)
                         let mask := shl(sub(24, mul(and(rs, 3), 8)), 0xFFFFFFFF)
                         out := or(and(mem, not(mask)), val)
                     }
-                    case 0x30 { out := mem } // ll
-                    case 0x38 { out := rt } // sc
+                    // ll
+                    case 0x30 { out := mem }
+                    // sc
+                    case 0x38 { out := rt }
                     default { badInsn := true }
                 }
             }
