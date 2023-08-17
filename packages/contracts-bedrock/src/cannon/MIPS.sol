@@ -804,7 +804,7 @@ contract MIPS {
                     // sra
                     case 0x03 {
                         let shamt := and(shr(6, insn), 0x1F)
-                        out := sar(signextend(3, shamt), signextend(3, rt))
+                        out := sar(shamt, signextend(3, rt))
                     }
                     // sllv
                     case 0x04 { out := shl(and(rs, 0x1F), rt) }
@@ -949,5 +949,7 @@ contract MIPS {
                 revert("invalid instruction");
             }
         }
+        // clear any leftover bits in the word
+        out &= 0xFFFFFFFF;
     }
 }
